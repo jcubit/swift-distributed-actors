@@ -18,8 +18,9 @@ import NIO
 import Darwin
 #elseif canImport(Glibc)
 import Glibc
+#elseif canImport(Musl)
+import Musl
 #endif
-
 // MARK: utilities to convert between Duration and C timespec
 
 private let NANOS = 1_000_000_000

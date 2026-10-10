@@ -20,6 +20,8 @@ import NIO
 import Darwin
 #elseif canImport(Glibc)
 import Glibc
+#elseif canImport(Musl)
+import Musl
 #endif
 
 /// Not intended for general use.
@@ -56,7 +58,9 @@ public class _Thread {
             }
         )
 
-        #if os(Linux)
+        // glibc: `pthread_t` is an integer (zero-initializable, non-optional in pthread_create).
+        // Darwin and musl: `pthread_t` is a pointer type, and pthread_create takes `pthread_t?`.
+        #if os(Linux) && !canImport(Musl)
         var t = pthread_t()
         #else
         var t: pthread_t?
@@ -67,7 +71,7 @@ public class _Thread {
             throw ThreadError.threadCreationFailed
         }
 
-        #if os(Linux)
+        #if os(Linux) && !canImport(Musl)
         self.thread = t
         #else
         self.thread = t!
